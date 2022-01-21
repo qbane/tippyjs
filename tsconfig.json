@@ -2,12 +2,15 @@
   "compilerOptions": {
     "lib": ["dom", "es2015"],
     "moduleResolution": "node",
-    "noEmit": true,
+    // "noEmit": true,
+    "target": "es2015",
     "resolveJsonModule": true,
+    "outDir": "src-js",
+    "rootDir": "src",
     "strict": true,
     "noUnusedLocals": true,
     "types": ["node"],
     "allowJs": true
   },
-  "include": ["src/**/*", "index.d.ts", "index.test-d.ts"]
+  "include": ["src/**/*", "index.d.ts"/*, "index.test-d.ts"*/]
 }

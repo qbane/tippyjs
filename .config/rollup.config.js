@@ -1,3 +1,4 @@
+import fs from 'fs';
 import babel from 'rollup-plugin-babel';
 import json from 'rollup-plugin-json';
 import resolve from 'rollup-plugin-node-resolve';
@@ -30,7 +31,7 @@ const plugins = {
 
 const prodCommonPlugins = [
   plugins.replaceNamespace,
-  plugins.resolve,
+  // plugins.resolve,
   plugins.json,
 ];
 
@@ -72,110 +73,33 @@ const commonUMDOutputOptions = {
   sourcemap: true,
 };
 
-const prodConfig = [
-  {
-    input: 'build/base-umd.js',
-    plugins: pluginConfigs.umdBase,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'dist/tippy.umd.js',
-      banner,
-    },
-  },
-  {
-    input: 'build/bundle-umd.js',
-    plugins: pluginConfigs.umdBundle,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'dist/tippy-bundle.umd.js',
-      banner,
-    },
-  },
-  {
-    input: 'build/base-umd.js',
-    plugins: pluginConfigs.umdBaseMin,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'dist/tippy.umd.min.js',
-    },
-  },
-  {
-    input: 'build/bundle-umd.js',
-    plugins: pluginConfigs.umdBundleMin,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'dist/tippy-bundle.umd.min.js',
-    },
-  },
-  {
-    input: 'build/base.js',
-    plugins: pluginConfigs.bundle,
-    external: ['@popperjs/core'],
-    output: {
-      file: 'dist/tippy.esm.js',
-      format: 'esm',
-      banner,
-      sourcemap: true,
-    },
-  },
-  {
-    input: 'build/headless.js',
-    plugins: pluginConfigs.base,
-    external: ['@popperjs/core'],
-    output: {
-      file: 'headless/dist/tippy-headless.esm.js',
-      format: 'esm',
-      banner,
-      sourcemap: true,
-    },
-  },
-  {
-    input: 'build/base.js',
-    plugins: pluginConfigs.bundle,
-    external: ['@popperjs/core'],
-    output: {
-      file: 'dist/tippy.cjs.js',
-      format: 'cjs',
-      exports: 'named',
-      banner,
-      sourcemap: true,
-    },
-  },
-  {
-    input: 'build/headless.js',
-    plugins: pluginConfigs.base,
-    external: ['@popperjs/core'],
-    output: {
-      file: 'headless/dist/tippy-headless.cjs.js',
-      format: 'cjs',
-      exports: 'named',
-      banner,
-      sourcemap: true,
-    },
-  },
-  {
-    input: 'build/headless-umd.js',
-    plugins: pluginConfigs.umdBase,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'headless/dist/tippy-headless.umd.js',
-    },
-  },
-  {
-    input: 'build/headless-umd.js',
-    plugins: pluginConfigs.umdBaseMin,
-    external: ['@popperjs/core'],
-    output: {
-      ...commonUMDOutputOptions,
-      file: 'headless/dist/tippy-headless.umd.min.js',
-    },
-  },
-];
+const getEsmInputConfig = () => {
+  const list = []
+
+  for (const folder of ['', '/addons', '/plugins']) {
+    const path = 'src-js' + folder
+    const entries = fs.readdirSync(path)
+      .filter(x => x.match(/\.js$/i) && !x.match(/^types.*/))
+      .map(s => path + '/' + s)
+    list.push(...entries)
+  }
+
+  return list.map(input => {
+    return {
+      input,
+      plugins: pluginConfigs.bundle,
+      external: ['@popperjs/core'],
+      output: {
+        file: input.replace(/^src-js\//, 'lib/'),
+        format: 'esm',
+        banner,
+        sourcemap: true,
+      },
+    }
+  })
+}
+
+const prodConfig = getEsmInputConfig();
 
 // Calling the `serve()` plugin causes the process to hang, so we need to delay
 // its evaluation

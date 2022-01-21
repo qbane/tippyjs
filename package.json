@@ -1,14 +1,9 @@
 {
-  "name": "tippy.js",
-  "version": "6.3.7",
+  "name": "@qbane/tippy.js",
+  "version": "6.3.7-esm.0",
   "description": "The complete tooltip, popover, dropdown, and menu solution for the web",
-  "main": "dist/tippy.cjs.js",
-  "module": "dist/tippy.esm.js",
-  "unpkg": "dist/tippy-bundle.umd.min.js",
+  "module": "tippy.js",
   "types": "index.d.ts",
-  "sideEffects": [
-    "**/*.css"
-  ],
   "author": "atomiks",
   "contributors": [
     "Brett Zamir"
@@ -26,19 +21,19 @@
     "tippy.js"
   ],
   "files": [
-    "dist/",
-    "animations/",
-    "themes/",
-    "headless/",
-    "index.d.ts"
+    "lib/",
+    "tippy.js"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atomiks/tippyjs.git"
+    "url": "git+https://github.com/qbane/tippyjs.git"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=dev rollup -c .config/rollup.config.js --watch",
-    "build": "node build/index.js && rollup -c .config/rollup.config.js && bundlesize",
+    "build": "tsc && rollup -c .config/rollup.config.js",
     "build:visual": "cross-env NODE_ENV=test rollup -c .config/rollup.config.js",
     "serve": "serve test/visual",
     "test:dom": "jest unit integration --coverage",
@@ -68,24 +63,6 @@
     "> 0.5%",
     "not dead",
     "not safari < 8"
-  ],
-  "bundlesize": [
-    {
-      "path": "dist/tippy-bundle.umd.min.js",
-      "maxSize": "10 kB"
-    },
-    {
-      "path": "headless/dist/tippy-headless.umd.min.js",
-      "maxSize": "10 kB"
-    },
-    {
-      "path": "dist/tippy.umd.min.js",
-      "maxSize": "10 kB"
-    },
-    {
-      "path": "dist/tippy.css",
-      "maxSize": "5 kB"
-    }
   ],
   "husky": {
     "hooks": {
